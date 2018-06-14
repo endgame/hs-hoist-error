@@ -70,9 +70,9 @@ class Monad m => HoistError m t e e' | t -> e where
   -- computation into @m@.
   --
   -- @
-  -- hoistError :: 'MonadError' e m -> (() -> e) -> 'Maybe'       a -> m a
-  -- hoistError :: 'MonadError' e m -> (a  -> e) -> 'Either'  a   b -> m b
-  -- hoistError :: 'MonadError' e m -> (a  -> e) -> 'ExceptT' a m b -> m b
+  -- 'hoistError' :: 'MonadError' e m -> (() -> e) -> 'Maybe'       a -> m a
+  -- 'hoistError' :: 'MonadError' e m -> (a  -> e) -> 'Either'  a   b -> m b
+  -- 'hoistError' :: 'MonadError' e m -> (a  -> e) -> 'ExceptT' a m b -> m b
   -- @
   hoistError
     :: (e -> e')
@@ -123,9 +123,9 @@ hoistErrorM e m = do
 -- | A flipped synonym for 'hoistError'.
 --
 -- @
--- '<%?>' :: 'MonadError' e m => 'Maybe'       a -> (() -> e) ->           m a
--- '<%?>' :: 'MonadError' e m => 'Either'  a   b -> (a  -> e) ->           m b
--- '<%?>' :: 'MonadError' e m => 'ExceptT' a m b -> (a  -> e) -> 'ExceptT' a m b
+-- ('<%?>') :: 'MonadError' e m => 'Maybe'       a -> (() -> e) ->           m a
+-- ('<%?>') :: 'MonadError' e m => 'Either'  a   b -> (a  -> e) ->           m b
+-- ('<%?>') :: 'MonadError' e m => 'ExceptT' a m b -> (a  -> e) -> 'ExceptT' a m b
 -- @
 (<%?>)
   :: HoistError m t e e'
@@ -137,12 +137,12 @@ hoistErrorM e m = do
 infixl 8 <%?>
 {-# INLINE (<%?>) #-}
 
--- | A version of '<%?>' that operates on values already in the monad.
+-- | A flipped synonym for 'hoistErrorM'.
 --
 -- @
--- '<%!?>' :: 'MonadError' e m => m ('Maybe'       a) -> (() -> e) ->           m a
--- '<%!?>' :: 'MonadError' e m => m ('Either'  a   b) -> (a  -> e) ->           m b
--- '<%!?>' :: 'MonadError' e m =>    'ExceptT' a m b  -> (a  -> e) -> 'ExceptT' a m b
+-- ('<%!?>') :: 'MonadError' e m => m ('Maybe'       a) -> (() -> e) ->           m a
+-- ('<%!?>') :: 'MonadError' e m => m ('Either'  a   b) -> (a  -> e) ->           m b
+-- ('<%!?>') :: 'MonadError' e m =>    'ExceptT' a m b  -> (a  -> e) -> 'ExceptT' a m b
 -- @
 (<%!?>)
   :: HoistError m t e e'
@@ -154,13 +154,13 @@ infixl 8 <%?>
 infixl 8 <%!?>
 {-# INLINE (<%!?>) #-}
 
--- | A version of 'hoistError' that ignores the error in @t a@ and replaces it
--- with a new one in @e'@.
+-- | A version of '<%?>' that ignores the error in @t a@ and replaces it
+-- with a new one.
 --
 -- @
--- '<?>' :: 'MonadError' e m => 'Maybe'       a -> e ->           m a
--- '<?>' :: 'MonadError' e m => 'Either'  a   b -> e ->           m b
--- '<?>' :: 'MonadError' e m => 'ExceptT' a m b -> e -> 'ExceptT' a m b
+-- ('<?>') :: 'MonadError' e m => 'Maybe'       a -> e ->           m a
+-- ('<?>') :: 'MonadError' e m => 'Either'  a   b -> e ->           m b
+-- ('<?>') :: 'MonadError' e m => 'ExceptT' a m b -> e -> 'ExceptT' a m b
 -- @
 (<?>)
   :: HoistError m t e e'
@@ -175,9 +175,9 @@ infixl 8 <?>
 -- | A version of '<?>' that operates on values already in the monad.
 --
 -- @
--- '<!?>' :: 'MonadError' e m => m ('Maybe'       a) -> e ->           m a
--- '<!?>' :: 'MonadError' e m => m ('Either'  a   b) -> e ->           m b
--- '<!?>' :: 'MonadError' e m =>    'ExceptT' a m b  -> e -> 'ExceptT' a m b
+-- ('<!?>') :: 'MonadError' e m => m ('Maybe'       a) -> e ->           m a
+-- ('<!?>') :: 'MonadError' e m => m ('Either'  a   b) -> e ->           m b
+-- ('<!?>') :: 'MonadError' e m =>    'ExceptT' a m b  -> e -> 'ExceptT' a m b
 -- @
 (<!?>)
   :: HoistError m t e e'
