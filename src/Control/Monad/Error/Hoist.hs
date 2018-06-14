@@ -106,8 +106,8 @@ instance MonadError e' m ⇒ HoistError m (ErrorT e m) e e' where
 -- | A flipped synonym for 'hoistError'.
 --
 -- @
--- '<%?>' :: 'MonadError' e m => 'Maybe'       a -> (() -> e) ->             m a
--- '<%?>' :: 'MonadError' e m => 'Either'  a   b -> (a  -> e) ->             m b
+-- '<%?>' :: 'MonadError' e m => 'Maybe'       a -> (() -> e) ->           m a
+-- '<%?>' :: 'MonadError' e m => 'Either'  a   b -> (a  -> e) ->           m b
 -- '<%?>' :: 'MonadError' e m => 'ExceptT' a m b -> (a  -> e) -> 'ExceptT' a m b
 -- @
 (<%?>)
@@ -123,8 +123,8 @@ infixl 8 <%?>
 -- | A version of '<%?>' that operates on values already in the monad.
 --
 -- @
--- '<%!?>' :: 'MonadError' e m => m ('Maybe'       a) -> (() -> e) ->             m a
--- '<%!?>' :: 'MonadError' e m => m ('Either'  a   b) -> (a  -> e) ->             m b
+-- '<%!?>' :: 'MonadError' e m => m ('Maybe'       a) -> (() -> e) ->           m a
+-- '<%!?>' :: 'MonadError' e m => m ('Either'  a   b) -> (a  -> e) ->           m b
 -- '<%!?>' :: 'MonadError' e m =>    'ExceptT' a m b  -> (a  -> e) -> 'ExceptT' a m b
 -- @
 (<%!?>)
@@ -143,8 +143,8 @@ infixl 8 <%!?>
 -- with a new one in @e'@.
 --
 -- @
--- '<?>' :: 'MonadError' e m => 'Maybe'       a -> e ->             m a
--- '<?>' :: 'MonadError' e m => 'Either'  a   b -> e ->             m b
+-- '<?>' :: 'MonadError' e m => 'Maybe'       a -> e ->           m a
+-- '<?>' :: 'MonadError' e m => 'Either'  a   b -> e ->           m b
 -- '<?>' :: 'MonadError' e m => 'ExceptT' a m b -> e -> 'ExceptT' a m b
 -- @
 (<?>)
@@ -160,8 +160,8 @@ infixl 8 <?>
 -- | A version of '<?>' that operates on values already in the monad.
 --
 -- @
--- '<!?>' :: 'MonadError' e m => m ('Maybe'       a) -> e ->             m a
--- '<!?>' :: 'MonadError' e m => m ('Either'  a   b) -> e ->             m b
+-- '<!?>' :: 'MonadError' e m => m ('Maybe'       a) -> e ->           m a
+-- '<!?>' :: 'MonadError' e m => m ('Either'  a   b) -> e ->           m b
 -- '<!?>' :: 'MonadError' e m =>    'ExceptT' a m b  -> e -> 'ExceptT' a m b
 -- @
 (<!?>)
