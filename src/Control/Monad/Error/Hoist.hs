@@ -34,6 +34,7 @@
 
 module Control.Monad.Error.Hoist
   ( HoistError(..)
+  , hoistErrorM
   , (<%?>)
   , (<%!?>)
   , (<?>)
@@ -102,6 +103,22 @@ instance MonadError e' m => HoistError m (ExceptT e m) e e' where
 instance MonadError e' m => HoistError m (ErrorT e m) e e' where
   hoistError f = either (throwError . f) return <=< runErrorT
 #endif
+
+-- | A version of 'hoistError' that operates on values already in the monad.
+--
+-- @
+-- 'hoistErrorM' :: 'MonadError' e m => (() -> e) -> m ('Maybe'       a) ->           m a
+-- 'hoistErrorM' :: 'MonadError' e m => (a  -> e) -> m ('Either'  a   b) ->           m b
+-- 'hoistErrorM' :: 'MonadError' e m => (a  -> e) ->    'ExceptT' a m b  -> 'ExceptT' a m b
+-- @
+hoistErrorM
+  :: HoistError m t e e'
+  => (e -> e')
+  -> m (t a)
+  -> m a
+hoistErrorM e m = do
+  x <- m
+  hoistError e x
 
 -- | A flipped synonym for 'hoistError'.
 --
