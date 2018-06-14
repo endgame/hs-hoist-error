@@ -29,3 +29,7 @@ backend.log
 
 ### OS X ###
 .DS_Store
+
+### Nix ###
+result
+result-doc
