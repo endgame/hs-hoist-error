@@ -149,9 +149,7 @@ infixl 8 <%?>
   => m (t a)
   -> (e -> e')
   -> m a
-m <%!?> e = do
-  x <- m
-  x <%?> e
+(<%!?>) = flip hoistErrorM
 
 infixl 8 <%!?>
 {-# INLINE (<%!?>) #-}
