@@ -23,7 +23,6 @@ sca.log
 backend.log
 
 ### Emacs ###
-# -*- mode: gitignore; -*-
 *~
 \#*\#
 .\#*
