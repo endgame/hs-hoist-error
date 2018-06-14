@@ -3,7 +3,7 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GADTs                  #-}
 {-# LANGUAGE MultiParamTypeClasses  #-}
-{-# LANGUAGE UnicodeSyntax          #-}
+
 -- | 'HoistError' extends 'MonadError' with 'hoistError', which enables lifting
 -- of partiality types such as 'Maybe' and @'Either' e@ into the monad.
 --
@@ -63,9 +63,9 @@ import           Control.Monad.Trans.Either (EitherT, eitherT, runEitherT)
 -- information carried by the partiality type @t@, and @e'@ represents the type
 -- of error expected in the monad @m@.
 --
-class Monad m ⇒ HoistError m t e e' | t → e where
+class Monad m => HoistError m t e e' | t -> e where
 
-  -- | Given a conversion from the error in @t α@ to @e'@, we can hoist the
+  -- | Given a conversion from the error in @t a@ to @e'@, we can hoist the
   -- computation into @m@.
   --
   -- @
@@ -74,32 +74,32 @@ class Monad m ⇒ HoistError m t e e' | t → e where
   -- hoistError :: 'MonadError' e m -> (a  -> e) -> 'ExceptT' a m b -> m b
   -- @
   hoistError
-    ∷ (e → e')
-    → t α
-    → m α
+    :: (e -> e')
+    -> t a
+    -> m a
 
-instance MonadError e m ⇒ HoistError m Maybe () e where
+instance MonadError e m => HoistError m Maybe () e where
   hoistError f = maybe (throwError $ f ()) return
 
-instance MonadError e' m ⇒ HoistError m (Either e) e e' where
+instance MonadError e' m => HoistError m (Either e) e e' where
   hoistError f = either (throwError . f) return
 
 #if MIN_VERSION_either(5,0,0)
 -- Control.Monad.Trans.Either was removed from @either@ in version 5.
 #else
-instance (m ~ n, MonadError e' m) ⇒ HoistError m (EitherT e n) e e' where
+instance (m ~ n, MonadError e' m) => HoistError m (EitherT e n) e e' where
   hoistError f = eitherT (throwError . f) return
 #endif
 
 #if MIN_VERSION_mtl(2,2,2)
-instance MonadError e' m ⇒ HoistError m (Except e) e e' where
+instance MonadError e' m => HoistError m (Except e) e e' where
   hoistError f = either (throwError . f) return . runExcept
 
-instance MonadError e' m ⇒ HoistError m (ExceptT e m) e e' where
+instance MonadError e' m => HoistError m (ExceptT e m) e e' where
   hoistError f = either (throwError . f) return <=< runExceptT
 #else
 -- 'ErrorT' was renamed to 'ExceptT' in mtl 2.2.2
-instance MonadError e' m ⇒ HoistError m (ErrorT e m) e e' where
+instance MonadError e' m => HoistError m (ErrorT e m) e e' where
   hoistError f = either (throwError . f) return <=< runErrorT
 #endif
 
@@ -111,10 +111,10 @@ instance MonadError e' m ⇒ HoistError m (ErrorT e m) e e' where
 -- '<%?>' :: 'MonadError' e m => 'ExceptT' a m b -> (a  -> e) -> 'ExceptT' a m b
 -- @
 (<%?>)
-  ∷ HoistError m t e e'
-  ⇒ t α
-  → (e → e')
-  → m α
+  :: HoistError m t e e'
+  => t a
+  -> (e -> e')
+  -> m a
 (<%?>) = flip hoistError
 
 infixl 8 <%?>
@@ -128,18 +128,18 @@ infixl 8 <%?>
 -- '<%!?>' :: 'MonadError' e m =>    'ExceptT' a m b  -> (a  -> e) -> 'ExceptT' a m b
 -- @
 (<%!?>)
-  ∷ HoistError m t e e'
-  ⇒ m (t α)
-  → (e → e')
-  → m α
+  :: HoistError m t e e'
+  => m (t a)
+  -> (e -> e')
+  -> m a
 m <%!?> e = do
-  x ← m
+  x <- m
   x <%?> e
 
 infixl 8 <%!?>
 {-# INLINE (<%!?>) #-}
 
--- | A version of 'hoistError' that ignores the error in @t α@ and replaces it
+-- | A version of 'hoistError' that ignores the error in @t a@ and replaces it
 -- with a new one in @e'@.
 --
 -- @
@@ -148,10 +148,10 @@ infixl 8 <%!?>
 -- '<?>' :: 'MonadError' e m => 'ExceptT' a m b -> e -> 'ExceptT' a m b
 -- @
 (<?>)
-  ∷ HoistError m t e e'
-  ⇒ t α
-  → e'
-  → m α
+  :: HoistError m t e e'
+  => t a
+  -> e'
+  -> m a
 m <?> e = m <%?> const e
 
 infixl 8 <?>
@@ -165,12 +165,12 @@ infixl 8 <?>
 -- '<!?>' :: 'MonadError' e m =>    'ExceptT' a m b  -> e -> 'ExceptT' a m b
 -- @
 (<!?>)
-  ∷ HoistError m t e e'
-  ⇒ m (t α)
-  → e'
-  → m α
+  :: HoistError m t e e'
+  => m (t a)
+  -> e'
+  -> m a
 m <!?> e = do
-  x ← m
+  x <- m
   x <?> e
 
 infixl 8 <!?>
